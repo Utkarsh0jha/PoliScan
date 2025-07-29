@@ -1,10 +1,12 @@
 # PoliScan
-#Introduction
+Introduction
+
 Political donations are an important part of democracy. They help candidates run their campaigns and share their ideas with voters. To keep the system fair and trustworthy, it's important that the flow of money is open and transparent.
 In the U.S., the Federal Election Commission (FEC) collects and shares detailed data about who donates to political campaigns. While this data is publicly available, it’s often large, complex, and hard to understand. As a result, it becomes difficult to spot important patterns, trends, or possible signs of illegal or suspicious activity.
 
 
-#Objective
+Objective
+
 The primary objectives of this project are:
 •	Clean and organize the OpenFEC individual contributions data to make it ready for analysis.
 •	Find and group important features (like amount, donor info, etc.) that affect donation patterns.
