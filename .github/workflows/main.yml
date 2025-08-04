@@ -1,0 +1,31 @@
+name: Upload ETL Script & Trigger Job
+
+on:
+  push:
+    branches:
+      - blade
+
+jobs:
+  upload-and-run-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # ✅ Added session token
+          aws-region: ${{ secrets.REGION }}
+
+      # - name: Upload latest ETL script to S3
+      #   run: |
+      #     aws s3 cp my-etl-pipline/glue-script/weather-etl.py s3://fullautomatedbucket/scripts/weather-etl.py
+      - name: Upload file to S3
+        run: |
+          aws s3 cp . s3://u.cicd/  --recursive --exclude ".git/" --exclude ".github/"
+      # - name: Trigger Glue ETL Job
+      #   run: |
+      #     aws glue start-job-run --job-name glue-etl-job
