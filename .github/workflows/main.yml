@@ -25,4 +25,4 @@ jobs:
       #     aws s3 cp my-etl-pipline/glue-script/weather-etl.py s3://fullautomatedbucket/scripts/weather-etl.py
       # - name: Trigger Glue ETL Job
       #   run: |
-      #     aws glue start-job-run --job-name glue-etl-job
+      #     aws glue start-job-run --job-name glue-etl-job 
