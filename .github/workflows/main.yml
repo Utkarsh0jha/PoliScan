@@ -20,9 +20,9 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # ✅ Added session token
           aws-region: ${{ secrets.REGION }}
 
-      # - name: Upload latest ETL script to S3
-      #   run: |
-      #     aws s3 cp my-etl-pipline/glue-script/weather-etl.py s3://fullautomatedbucket/scripts/weather-etl.py
+      - name: Upload latest ETL script to S3
+        run: |
+          aws s3 cp PoliScan\.github\workflows\my-elt-pipeline\glue-script\First_Glue_Job.py s3://u.cicd/ETL_SCRIPT/First_Glue_Job.py
       # - name: Upload file to S3
       #   run: |
       #     aws s3 cp . s3://u.cicd/  --recursive --exclude ".git/" --exclude ".github/"
