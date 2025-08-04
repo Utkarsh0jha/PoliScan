@@ -20,7 +20,7 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # ✅ Added session token
           aws-region: ${{ secrets.REGION }}
 
-      # - name: Upload latest ETL script to S3
+      # - name: Upload latest ETL script to S3  
       #   run: |
       #     aws s3 cp my-etl-pipline/glue-script/weather-etl.py s3://fullautomatedbucket/scripts/weather-etl.py
       # - name: Trigger Glue ETL Job
