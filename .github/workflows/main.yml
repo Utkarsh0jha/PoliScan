@@ -3,29 +3,34 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - prathmesh
+      - utkarsh
 
 jobs:
   upload-and-run-etl:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # ✅ Added session token
-          aws-region: ${{ secrets.REGION }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.REGION }} 
 
-      # - name: Upload latest ETL script to S3  
-      #   run: |
-      #     aws s3 cp my-etl-pipline/glue-script/weather-etl.py s3://fullautomatedbucket/scripts/weather-etl.py
-      - name: Upload file to S3
+      - name: Upload ingestion_job.py to S3
         run: |
-          aws s3 cp . s3://u.cicd/  --recursive --exclude ".git/" --exclude ".github/"
-      # - name: Trigger Glue ETL Job
+          aws s3 cp my-etl-pipeline/glue-script/ingestion_job.py s3://cicd.try4/test1/
+
+
+
+      # - name: Upload ingestion_job.py to S3
       #   run: |
-      #     aws glue start-job-run --job-name glue-etl-job 
+      #     aws s3 cp PoliScan/.github/workflows/my-elt-pipeline/glue-script/ingestion_job.py s3://u.cicd.glue/ingestion/ingestion_job.py
+
+      # - name: Upload transformation_job.py to S3
+      #   run: |
+      #     aws s3 cp PoliScan/.github/workflows/my-elt-pipeline/glue-script/transformation_job.py s3://u.cicd.glue/transformation/transformation_job.py
