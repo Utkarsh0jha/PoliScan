@@ -6,26 +6,113 @@ on:
       - main
 
 jobs:
-  upload-and-run-etl:
+  upload-and-run-etl: 
     runs-on: ubuntu-latest
-
+ 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # ✅ Added session token
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.REGION }}
 
-      # - name: Upload latest ETL script to S3  
-      #   run: |
-      #     aws s3 cp my-etl-pipline/glue-script/weather-etl.py s3://fullautomatedbucket/scripts/weather-etl.py
-      - name: Upload file to S3
+      - name: Upload ingestion_job.py to S3
         run: |
-          aws s3 cp . s3://u.cicd/  --recursive --exclude ".git/" --exclude ".github/"
-      # - name: Trigger Glue ETL Job
-      #   run: |
-      #     aws glue start-job-run --job-name glue-etl-job 
+          aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://cicd.try4/test1/
+
+      - name: Upload transformation_job.py to S3
+        run: |
+          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://cicd.try4/test2/
+
+      - name: Start Glue Job ingestion_job
+        id: start_ingestion
+        run: |
+          echo "Starting Glue job: ingestion_job"
+          RUN_ID=$(aws glue start-job-run \
+            --job-name ingestion_job \
+            --query 'JobRunId' \
+            --output text)
+          echo "Glue ingestion_job started with Run ID: $RUN_ID"
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Wait for ingestion_job to complete
+        run: |
+          echo "Waiting for ingestion_job to complete..."
+          STATUS="STARTING"
+          while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
+            STATUS=$(aws glue get-job-run \
+              --job-name ingestion_job \
+              --run-id ${{ steps.start_ingestion.outputs.run_id }} \
+              --query 'JobRun.JobRunState' \
+              --output text)
+            echo "Current status: $STATUS"
+            sleep 30
+          done
+
+          if [[ "$STATUS" != "SUCCEEDED" ]]; then
+            echo "Ingestion job failed with status: $STATUS"
+            exit 1
+          fi
+
+          echo "Ingestion job completed successfully."
+
+      - name: Start and Wait for Glue Job transformation_job
+        run: |
+          echo "Starting Glue job: transformation_job"
+          TRANSFORM_RUN_ID=$(aws glue start-job-run \
+            --job-name transformation_job \
+            --query 'JobRunId' \
+            --output text)
+          echo "Glue transformation_job started with Run ID: $TRANSFORM_RUN_ID"
+
+          echo "Waiting for transformation_job to complete..."
+          STATUS="STARTING"
+          while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
+            STATUS=$(aws glue get-job-run \
+              --job-name transformation_job \
+              --run-id $TRANSFORM_RUN_ID \
+              --query 'JobRun.JobRunState' \
+              --output text)
+            echo "Current status: $STATUS"
+            sleep 30
+          done
+
+          if [[ "$STATUS" != "SUCCEEDED" ]]; then
+            echo "Transformation job failed with status: $STATUS"
+            exit 1
+          fi
+
+          echo "Transformation job completed successfully."
+
+      - name: Start Glue Crawler
+        run: |
+          echo "Starting Glue Crawler: CI_CD_Crawler"
+          aws glue start-crawler --name CI_CD_Crawler
+
+      - name: Wait for Crawler to Finish
+        run: |
+          echo "Waiting for crawler to complete..."
+          
+          while true; do 
+            STATUS=$(aws glue get-crawler \
+              --name CI_CD_Crawler \
+              --query 'Crawler.State' \
+              --output text)
+            
+            echo "Current crawler status: $STATUS"
+
+            if [[ "$STATUS" == "READY" ]]; then
+              echo "Crawler completed successfully."
+              break
+            elif [[ "$STATUS" == "FAILED" ]]; then
+              echo "Crawler failed."
+              exit 1 
+            fi
+            
+            sleep 30
+          done
