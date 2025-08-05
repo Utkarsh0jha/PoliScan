@@ -99,7 +99,7 @@ jobs:
           STATUS="RUNNING"
           while [[ "$STATUS" == "RUNNING" ]]; do
             STATUS=$(aws glue get-crawler \
-              --name final_catalog_crawler \
+              --name CI_CD_Crawler \
               --query 'Crawler.State' \
               --output text)
             echo "Current crawler status: $STATUS" 
