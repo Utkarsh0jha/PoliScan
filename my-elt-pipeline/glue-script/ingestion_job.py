@@ -85,7 +85,7 @@ df_contribution.write.mode("overwrite").parquet("s3://ci.cd.test1/CI_CD(CSV+TO+P
 df_committee.write.mode("overwrite").parquet("s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/committee/")
 df_candidate.write.mode("overwrite").parquet("s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/candidate/")
 
-
+ 
 # Finish the job
 job.commit()
 print("✅ Glue job completed successfully.")
