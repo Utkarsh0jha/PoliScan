@@ -3,7 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      -prathmesh
+      - prathmesh
 
 jobs:
   upload-and-run-etl:
