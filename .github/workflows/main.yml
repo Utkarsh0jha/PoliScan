@@ -3,7 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - utkarsh
+      - main
 
 jobs:
   upload-and-run-etl:
@@ -61,7 +61,30 @@ jobs:
 
           echo "Ingestion job completed successfully."
 
-      - name: Start Glue Job transformation_job
+      - name: Start and Wait for Glue Job transformation_job
         run: |
           echo "Starting Glue job: transformation_job"
-          aws glue start-job-run --job-name transformation_job
+          TRANSFORM_RUN_ID=$(aws glue start-job-run \
+            --job-name transformation_job \
+            --query 'JobRunId' \
+            --output text)
+          echo "Glue transformation_job started with Run ID: $TRANSFORM_RUN_ID"
+
+          echo "Waiting for transformation_job to complete..."
+          STATUS="STARTING"
+          while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
+            STATUS=$(aws glue get-job-run \
+              --job-name transformation_job \
+              --run-id $TRANSFORM_RUN_ID \
+              --query 'JobRun.JobRunState' \
+              --output text)
+            echo "Current status: $STATUS"
+            sleep 30
+          done
+
+          if [[ "$STATUS" != "SUCCEEDED" ]]; then
+            echo "Transformation job failed with status: $STATUS"
+            exit 1
+          fi
+
+          echo "Transformation job completed successfully."
