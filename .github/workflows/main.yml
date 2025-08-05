@@ -61,7 +61,7 @@ jobs:
 
           echo "Ingestion job completed successfully."
 
-        - name: Start and Wait for Glue Job transformation_job
+      - name: Start and Wait for Glue Job transformation_job
         run: |
           echo "Starting Glue job: transformation_job"
           TRANSFORM_RUN_ID=$(aws glue start-job-run \
