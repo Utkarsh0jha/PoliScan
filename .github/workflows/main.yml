@@ -23,7 +23,7 @@ jobs:
 
       - name: Upload ingestion_job.py to S3
         run: |
-          aws s3 cp C:\Users\mrpbo\OneDrive\Desktop\Dbda\Final_Project\PoliScan_CI.CD\PoliScan\my-elt-pipeline\glue-script\1.txt s3://cicd.try4/test1/
+          aws s3 cp my-elt-pipeline/glue-script/1.txt s3://cicd.try4/test1/
 
 
 
