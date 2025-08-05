@@ -3,7 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - main
+      - utkarsh
 
 jobs:
   upload-and-run-etl:
@@ -28,7 +28,13 @@ jobs:
         run: |
           aws s3 cp my-etl-pipeline/glue-script/transformation_job.py s3://cicd.try4/test2/
 
+      - name: Start Glue Job ingestion_job
+        run: |
+          aws glue start-job-run --job-name ingestion_job
 
+      - name: Start Glue Job transformation_job
+        run: |
+          aws glue start-job-run --job-name transformation_job
 
       # - name: Upload ingestion_job.py to S3
       #   run: |
