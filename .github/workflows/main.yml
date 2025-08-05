@@ -19,11 +19,46 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ secrets.REGION }} 
+          aws-region: ${{ secrets.REGION }}
 
       - name: Upload ingestion_job.py to S3
         run: |
-          aws s3 cp my-etl-pipeline/glue-script/ingestion_job.py s3://cicd.try4/test1/
-      - name: Upload ingestion_job.py to S3
+          aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://cicd.try4/test1/
+
+      - name: Upload transformation_job.py to S3
         run: |
-          aws s3 cp my-etl-pipeline/glue-script/transformation_job.py s3://cicd.try4/test2/
+          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://cicd.try4/test2/
+
+      - name: Start Glue Job ingestion_job
+        id: start_ingestion
+        run: |
+          echo "Starting Glue job: ingestion_job"
+          RUN_ID=$(aws glue start-job-run \
+            --job-name ingestion_job \
+            --query 'JobRunId' \
+            --output text)
+          echo "Glue ingestion_job started with Run ID: $RUN_ID"
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Wait for ingestion_job to complete
+        run: |
+          echo "Waiting for ingestion_job to complete..."
+          STATUS="STARTING"
+          while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
+            STATUS=$(aws glue get-job-run \
+              --job-name ingestion_job \
+              --run-id ${{ steps.start_ingestion.outputs.run_id }} \
+              --query 'JobRun.JobRunState' \
+              --output text)
+            echo "Current status: $STATUS"
+            sleep 30
+          done
+
+          if [[ "$STATUS" != "SUCCEEDED" ]]; then
+            echo "Ingestion job failed with status: $STATUS"
+            exit 1
+          fi
+
+          echo "Ingestion job completed successfully."
+
+      
