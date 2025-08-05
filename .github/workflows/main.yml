@@ -102,7 +102,7 @@ jobs:
               --name final_catalog_crawler \
               --query 'Crawler.State' \
               --output text)
-            echo "Current crawler status: $STATUS"
+            echo "Current crawler status: $STATUS" 
             sleep 30
           done
 
