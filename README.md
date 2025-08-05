@@ -6,14 +6,22 @@ Polyscan is an end-to-end big data analytics platform that leverages the publicl
 
 Our platform supports transparent, data-driven decisions in the electoral landscape by visualizing financial trends, flagging suspicious activities, and simplifying access to campaign finance data.
 
+
 Main dataset:
+
 https://www.fec.gov/campaign-finance-data/contributions-individuals-file-description/
+
 https://www.fec.gov/campaign-finance-data/committee-master-file-description/
+
 https://www.fec.gov/campaign-finance-data/candidate-master-file-description/
 
+
 Individuals → Committees: Contributions are made to committees (CMTE_ID).
+
 Committees → Candidates: Committees are linked to candidates (CAND_ID or CAND_PCC).
+
 Candidates → Elections: Candidate data includes election year, office, and party.
+
 
 
 🚀 The primary objectives of this project are:
@@ -74,21 +82,33 @@ Primary Source: OpenFEC Individual Contributions Dataset
 Expected Outcomes:
 
 •	A deployable dashboard for public or organizational use.
+
 •	A clean and well-organized dataset ready for analysis.
+
 •	Clear understanding of what factors influence political donations.
+
 •	Detection of unusual or suspicious donation activities.
+
 •	Insights into who is donating — based on location, job, and gender.
+
 •	Easy-to-read charts and visuals showing donation trends and red flags.
+
 •	A useful tool or system that helps others (like analysts or officials) explore and understand political donation data.
+
 
 
 Use Cases:
 
 •	Political Analysts & Researchers: Understand electoral dynamics, identify campaign finance trends, and support academic studies. 
+
 •	Campaign Managers & Fundraisers: Optimize fundraising, allocate resources effectively, and analyze competitor strategies. 
+
 •	Regulatory Bodies (e.g., FEC): Enhance compliance monitoring, fraud detection, and inform policy formulation. 
+
 •	Investigative Journalists: Uncover influence and expose financial irregularities. 
+
 •	Public & Advocacy Groups: Promote transparency and advocate for campaign finance reform.
+
 
 
 This project helps turn complex political donation data into clear and useful information. It allows people like analysts, campaign teams, and officials to see patterns, find unusual donations, and better understand who is funding politics.
