@@ -23,7 +23,7 @@ jobs:
 
       - name: Upload ingestion_job.py to S3
         run: |
-          aws s3 cp POLISCAN_CI.CD/PoliScan/1.txt s3://u.cicd.glue/test/1.txt
+          aws s3 cp my-etl-pipeline/glue-script/1.txt s3://u.cicd.glue/test/1.txt
 
 
       # - name: Upload ingestion_job.py to S3
