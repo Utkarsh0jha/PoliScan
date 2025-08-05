@@ -32,9 +32,9 @@ jobs:
         run: |
           aws glue start-job-run --job-name ingestion_job
 
-      - name: Start Glue Job transformation_job
-        run: |
-          aws glue start-job-run --job-name transformation_job
+      # - name: Start Glue Job transformation_job
+      #   run: |
+      #     aws glue start-job-run --job-name transformation_job
 
       # - name: Upload ingestion_job.py to S3
       #   run: |
