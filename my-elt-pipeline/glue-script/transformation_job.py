@@ -286,5 +286,25 @@ final_df = df_with_unknown.filter(
     (col("ELECTION_YEAR") == "UNKNOWN") | ((col("ELECTION_YEAR").cast("int") >= 2013) & (col("ELECTION_YEAR").cast("int") <= 2025))
 )
 
+from pyspark.sql.functions import when, col
 
-final_df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://ci.cd.test3/final_master/")
+# Assuming df is your DataFrame
+df = final_df.withColumn(
+    "COMMITTEE_PARTY_AFFILIATION",
+    when(col("COMMITTEE_PARTY_AFFILIATION").isin("REP", "DEM", "IND", "DFL"), 
+         col("COMMITTEE_PARTY_AFFILIATION"))
+    .otherwise("OTHERS")
+)
+df = df.withColumn(
+    "ENTITY_TP",
+    when(col("ENTITY_TP").isin("INDIVIDUAL", "CANDIDATE", "POLITICAL ACTION COMMITTEE"), 
+         col("ENTITY_TP"))
+    .otherwise("OTHERS")
+)
+df = df.withColumn(
+    "ELECTION_TP",
+    when(col("ELECTION_TP").isin("Primary", "General", "Runoff","Special"), 
+         col("ELECTION_TP"))
+    .otherwise("OTHERS")
+)
+df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://ci.cd.test3/final_master/")
