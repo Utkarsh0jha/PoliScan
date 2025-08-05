@@ -3,7 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - main
+      - utkarsh
 
 jobs:
   upload-and-run-etl:
@@ -16,7 +16,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ secrets.AWS_CESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.REGION }}
@@ -88,3 +88,27 @@ jobs:
           fi
 
           echo "Transformation job completed successfully."
+      - name: Start Glue Crawler
+        run: |
+          echo "Starting Glue Crawler: CI_CD_Crawler"
+          aws glue start-crawler --name CI_CD_Crawler
+
+      - name: Wait for Crawler to Finish
+        run: |
+          echo "Waiting for crawler to complete..."
+          STATUS="RUNNING"
+          while [[ "$STATUS" == "RUNNING" ]]; do
+            STATUS=$(aws glue get-crawler \
+              --name final_catalog_crawler \
+              --query 'Crawler.State' \
+              --output text)
+            echo "Current crawler status: $STATUS"
+            sleep 30
+          done
+
+          if [[ "$STATUS" != "READY" ]]; then
+            echo "Crawler ended with unexpected status: $STATUS"
+            exit 1 
+          fi
+
+          echo "Crawler completed successfully."
