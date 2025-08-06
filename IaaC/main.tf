@@ -24,7 +24,7 @@ locals {
 
 
 resource "aws_glue_job" "tf_ingestion_glue_job" {
-  name     = var.ingestion_glue_job
+  name     = var.tf_ingestion_glue_job
   role_arn = local.glue_role_arn
 
   command {
@@ -39,7 +39,7 @@ resource "aws_glue_job" "tf_ingestion_glue_job" {
 }
 
 resource "aws_glue_job" "tf_transformation_glue_job" {
-  name     = var.transformation_glue_job
+  name     = var.tf_transformation_glue_job
   role_arn = local.glue_role_arn
 
   command {

@@ -16,11 +16,11 @@ variable "tf-cleaned-bucket-uo" {
   default = "tf-cleaned-bucket-uo"
 }
 
-variable "ingestion_glue_job" {
+variable "tf_ingestion_glue_job" {
   default = "tf_ingestion_glue_job"
 }
 
-variable "transformation_glue_job" {
+variable "tf_transformation_glue_job" {
   default = "tf_transformation_glue_job"
 }
  

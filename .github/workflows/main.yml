@@ -42,12 +42,12 @@ jobs:
 
       - name: Upload transformation_job.py to S3
         run: |
-          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://tf-script-bucket-uo/transformed/ingestion_job.py
+          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://tf-script-bucket-uo/transformed/transformation_job.py
 
       - name: Start Glue Job ingestion_job
         id: start_ingestion
         run: |
-          echo "Starting Glue job: ingestion_job"
+          echo "Starting Glue job: tf_ingestion_glue_job"
           RUN_ID=$(aws glue start-job-run \
             --job-name ingestion_job \
             --query 'JobRunId' \
@@ -78,7 +78,7 @@ jobs:
 
       - name: Start and Wait for Glue Job transformation_job
         run: |
-          echo "Starting Glue job: transformation_job"
+          echo "Starting Glue job: tf_transformation_glue_job"
           TRANSFORM_RUN_ID=$(aws glue start-job-run \
             --job-name transformation_job \
             --query 'JobRunId' \
@@ -106,8 +106,8 @@ jobs:
 
       - name: Start Glue Crawler
         run: |
-          echo "Starting Glue Crawler: CI_CD_Crawler"
-          aws glue start-crawler --name CI_CD_Crawler
+          echo "Starting Glue Crawler: tf_automation_crawler"
+          aws glue start-crawler --name tf_automation_crawler
 
       - name: Wait for Crawler to Finish
         run: |
