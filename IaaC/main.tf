@@ -19,7 +19,7 @@ resource "aws_glue_catalog_database" "tf_crawler_db" {
 
 
 locals {
-  glue_role_arn = "arn:aws:iam::951764799690:role/LabRole"
+  glue_role_arn = "arn:aws:iam::968164097585:role/LabRole"
 }
 
 

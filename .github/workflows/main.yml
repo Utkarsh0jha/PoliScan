@@ -3,12 +3,12 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-    - utkarsh
+      - utkarsh
 
 jobs:
-  upload-and-run-etl: 
+  upload-and-run-etl:
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,7 +19,22 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ secrets.REGION }}    
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: IaaC
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: IaaC
+        run: terraform validate
+
+      - name: Terraform Apply
+        working-directory: IaaC
+        run: terraform apply -auto-approve
 
       - name: Upload ingestion_job.py to S3
         run: |
@@ -81,7 +96,7 @@ jobs:
             echo "Current status: $STATUS"
             sleep 30
           done
-          
+
           if [[ "$STATUS" != "SUCCEEDED" ]]; then
             echo "Transformation job failed with status: $STATUS"
             exit 1
@@ -97,13 +112,13 @@ jobs:
       - name: Wait for Crawler to Finish
         run: |
           echo "Waiting for crawler to complete..."
-          
-          while true; do 
+
+          while true; do
             STATUS=$(aws glue get-crawler \
               --name CI_CD_Crawler \
               --query 'Crawler.State' \
               --output text)
-            
+
             echo "Current crawler status: $STATUS"
 
             if [[ "$STATUS" == "READY" ]]; then
@@ -111,8 +126,8 @@ jobs:
               break
             elif [[ "$STATUS" == "FAILED" ]]; then
               echo "Crawler failed."
-              exit 1 
+              exit 1
             fi
-            
+
             sleep 30
           done
