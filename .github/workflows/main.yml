@@ -6,9 +6,9 @@ on:
       - main
 
 jobs:
-  upload-and-run-etl:
+  upload-and-run-etl: 
     runs-on: ubuntu-latest
-
+ 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -88,3 +88,31 @@ jobs:
           fi
 
           echo "Transformation job completed successfully."
+
+      - name: Start Glue Crawler
+        run: |
+          echo "Starting Glue Crawler: CI_CD_Crawler"
+          aws glue start-crawler --name CI_CD_Crawler
+
+      - name: Wait for Crawler to Finish
+        run: |
+          echo "Waiting for crawler to complete..."
+          
+          while true; do 
+            STATUS=$(aws glue get-crawler \
+              --name CI_CD_Crawler \
+              --query 'Crawler.State' \
+              --output text)
+            
+            echo "Current crawler status: $STATUS"
+
+            if [[ "$STATUS" == "READY" ]]; then
+              echo "Crawler completed successfully."
+              break
+            elif [[ "$STATUS" == "FAILED" ]]; then
+              echo "Crawler failed."
+              exit 1 
+            fi
+            
+            sleep 30
+          done
