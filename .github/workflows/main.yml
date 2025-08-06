@@ -38,11 +38,11 @@ jobs:
 
       - name: Upload ingestion_job.py to S3
         run: |
-          aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://tf-script-bucket-uo/ingestion/ingestion_job.py
+          aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://tf-script-bucket-uo/ingestion/tf_ingestion_job.py
 
       - name: Upload transformation_job.py to S3
         run: |
-          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://tf-script-bucket-uo/transformed/transformation_job.py
+          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://tf-script-bucket-uo/transformed/tf_transformation_job.py
 
       - name: Start Glue Job ingestion_job
         id: start_ingestion
