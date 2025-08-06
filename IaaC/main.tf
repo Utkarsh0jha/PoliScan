@@ -1,9 +1,15 @@
-resource "aws_s3_bucket" "tf_ingestion_bucket" {
-  bucket = var.raw_parquet_bucket
+resource "aws_s3_bucket" "tf_script_bucket" {
+  bucket = var.tf_script_bucket
 }
 
-resource "aws_s3_bucket" "tf_transformation_bucket" {
-  bucket = var.bucket_final
+
+resource "aws_s3_bucket" "tf_parquet_bucket" {
+  bucket = var.tf_parquet_bucket
+}
+
+
+resource "aws_s3_bucket" "tf_cleaned_bucket" {
+  bucket = var.tf_cleaned_bucket
 }
 
 resource "aws_glue_catalog_database" "tf_crawler_db" {
@@ -52,17 +58,13 @@ resource "aws_glue_crawler" "glue_crawler_name" {
   database_name = aws_glue_catalog_database.tf_crawler_db.name
 
   s3_target {
-    path = "s3://${aws_s3_bucket.tf_ingestion_bucket.bucket}/tf_parquet_data/"
+    path = "s3://${aws_s3_bucket.tf_ingestion_bucket.bucket}/final_master/"
   }
-
-  s3_target {
-    path = "s3://${aws_s3_bucket.tf_transformation_bucket.bucket}/tf_cleaned_data/"
-  }
-
   depends_on = [
     aws_glue_job.ingestion_glue_job,
     aws_glue_job.transformation_glue_job
   ]
 }
+
 
 

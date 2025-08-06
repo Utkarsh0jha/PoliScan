@@ -12,13 +12,13 @@ spark = glueContext.spark_session
 
 # Define Schemas
 contribution_paths = [
-    "s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/contribution/"
+    "s3://tf_parquet_bucket/CI_CD(CSV+TO+PARQUET)/contribution/"
 ]
 committee_paths = [
-    "s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/committee/"
+    "s3://tf_parquet_bucket/CI_CD(CSV+TO+PARQUET)/committee/"
 ]
 candidate_paths = [
-    "s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/candidate/"
+    "s3://tf_parquet_bucket/CI_CD(CSV+TO+PARQUET)/candidate/"
 ]
 
 # Read Parquet Files
@@ -308,4 +308,4 @@ df = df.withColumn(
          col("ELECTION_TP"))
     .otherwise("OTHERS") 
 )  
-df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://ci.cd.test3/final_master/")  
+df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf_cleaned_bucket/final_master/")  
