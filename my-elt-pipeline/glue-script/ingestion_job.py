@@ -89,3 +89,4 @@ df_candidate.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CS
 # Finish the job 
 job.commit()
 print("✅ Glue job completed successfully.")
+ 

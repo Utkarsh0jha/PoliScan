@@ -289,7 +289,7 @@ final_df = df_with_unknown.filter(
 
 from pyspark.sql.functions import when, col
 
-# Assuming df is your DataFrame
+# Assuming df is your DataFrame  
 df = final_df.withColumn(
     "COMMITTEE_PARTY_AFFILIATION",
     when(col("COMMITTEE_PARTY_AFFILIATION").isin("REP", "DEM", "IND", "DFL"), 

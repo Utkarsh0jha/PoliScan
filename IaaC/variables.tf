@@ -23,7 +23,7 @@ variable "ingestion_glue_job" {
 variable "transformation_glue_job" {
   default = "tf_transformation_glue_job"
 }
-
+ 
 
 variable "glue_crawler_name" {
   default = "tf_automation_crawler"
