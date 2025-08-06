@@ -115,11 +115,6 @@ This project helps turn complex political donation data into clear and useful in
 By making this information easier to explore, the project supports fairness, transparency, and trust in the election process. It gives the tools needed to keep political financing open and accountable — helping strengthen democracy in the U.S.
 
 
-🔗 Resources
-FEC Contribution Data
 
-Kaggle - Indian Weather Dataset (Auxiliary)
-
-Power BI Documentation
 
 
