@@ -81,11 +81,11 @@ df_contribution = spark.read.option("delimiter", "|").schema(contribution_schema
 df_committee    = spark.read.option("delimiter", "|").schema(committee_schema).csv(*input_path_committee)
 df_candidate    = spark.read.option("delimiter", "|").schema(candidate_schema).csv(*input_path_candidate)
 
-df_contribution.write.mode("overwrite").parquet("s3://tf_ingestion_bucket/CI_CD(CSV+TO+PARQUET)/contribution/")
-df_committee.write.mode("overwrite").parquet("s3://tf_ingestion_bucket/CI_CD(CSV+TO+PARQUET)/committee/")
-df_candidate.write.mode("overwrite").parquet("s3://tf_ingestion_bucket/CI_CD(CSV+TO+PARQUET)/candidate/")
+df_contribution.write.mode("overwrite").parquet("s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/contribution/")
+df_committee.write.mode("overwrite").parquet("s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/committee/")
+df_candidate.write.mode("overwrite").parquet("s3://ci.cd.test1/CI_CD(CSV+TO+PARQUET)/candidate/")
 
  
-# Finish the job
+# Finish the job 
 job.commit()
 print("✅ Glue job completed successfully.")
