@@ -46,35 +46,23 @@ resource "aws_glue_job" "transformation_glue_job" {
   number_of_workers = 2
   worker_type       = "G.1X"
 }
-
-
 resource "aws_glue_crawler" "glue_crawler_name" {
   name          = var.glue_crawler_name
   role          = local.glue_role_arn
   database_name = aws_glue_catalog_database.tf_crawler_db.name
-  
-  s3_ingestion{
-    path = "s3://${aws_s3_bucket.tf_ingestion_bucket.bucket}/tf_parquet_data/"
-    }
-    s3_transformation{
-    path = "s3://${aws_s3_bucket.tf_transformation_bucket.bucket}/tf_cleaned_data/"
-    }
-    depends_on
-}
-
-
-
-resource "aws_glue_crawler" "etl_crawler" {
-  name          = var.glue_crawler_name
-  role          = local.glue_role_arn
-  database_name = aws_glue_catalog_database.etl_db.name
 
   s3_target {
-    path = "s3://${aws_s3_bucket.etl_bucket.bucket}/cleaned_data/"
- }
+    path = "s3://${aws_s3_bucket.tf_ingestion_bucket.bucket}/tf_parquet_data/"
+  }
 
-  depends_on = [aws_glue_job.ingestion_glue_job,aws_glue_job.transformation_glue_job]
+  s3_target {
+    path = "s3://${aws_s3_bucket.tf_transformation_bucket.bucket}/tf_cleaned_data/"
+  }
+
+  depends_on = [
+    aws_glue_job.ingestion_glue_job,
+    aws_glue_job.transformation_glue_job
+  ]
 }
-
 
 
