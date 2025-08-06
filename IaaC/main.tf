@@ -58,7 +58,7 @@ resource "aws_glue_crawler" "glue_crawler_name" {
   database_name = aws_glue_catalog_database.tf_crawler_db.name
 
   s3_target {
-    path = "s3://${aws_s3_bucket.tf_ingestion_bucket.bucket}/final_master/"
+    path = "s3://${aws_s3_bucket.tf_cleaned_bucket.bucket}/final_master/"
   }
   depends_on = [
     aws_glue_job.ingestion_glue_job,
