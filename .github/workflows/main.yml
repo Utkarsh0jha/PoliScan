@@ -3,7 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - yogeshree
+      - main
 
 jobs:
   upload-and-run-etl: 
