@@ -3,27 +3,27 @@ variable "region" {
 }
 
 
-variable "tf_script_bucket" {
-  default = "tf-script-bucket"
+variable "tf-script-bucket-uo" {
+  default = "tf-script-bucket-uo"
 }
 
 
-variable "tf_parquet_bucket" {
-  default = "tf-parquet-bucket"
+variable "tf-parquet-bucket-uo" {
+  default = "tf-parquet-bucket-uo"
 }
 
-variable "tf_cleaned_bucket" {
-  default = "tf-cleaned-bucket"
+variable "tf-cleaned-bucket-uo" {
+  default = "tf-cleaned-bucket-uo"
 }
 
-variable "ingestion_glue_job" {
+variable "tf_ingestion_glue_job" {
   default = "tf_ingestion_glue_job"
 }
 
-variable "transformation_glue_job" {
+variable "tf_transformation_glue_job" {
   default = "tf_transformation_glue_job"
 }
-
+ 
 
 variable "glue_crawler_name" {
   default = "tf_automation_crawler"
@@ -31,10 +31,10 @@ variable "glue_crawler_name" {
 
 #declare a script path
 variable "script_ingestion_path" {
-  default = "s3://tf-script-bucket/ingestion/ingestion_job.py"
+  default = "s3://tf-script-bucket-uo/ingestion/ingestion_job.py"
 }
 
 #declare a script path
 variable "script_transformation_path" {
-  default = "s3://tf-script-bucket/transformation/transformation_job.py"
+  default = "s3://tf-script-bucket-uo/transformation/transformation_job.py"
 }

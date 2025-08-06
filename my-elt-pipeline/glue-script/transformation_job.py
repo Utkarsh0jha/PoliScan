@@ -12,13 +12,13 @@ spark = glueContext.spark_session
 
 # Define Schemas
 contribution_paths = [
-    "s3://tf_parquet_bucket/CI_CD(CSV+TO+PARQUET)/contribution/"
+    "s3://s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/"
 ]
 committee_paths = [
-    "s3://tf_parquet_bucket/CI_CD(CSV+TO+PARQUET)/committee/"
+    "s3://s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/"
 ]
 candidate_paths = [
-    "s3://tf_parquet_bucket/CI_CD(CSV+TO+PARQUET)/candidate/"
+    "s3://s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/"
 ]
 
 # Read Parquet Files
@@ -289,7 +289,7 @@ final_df = df_with_unknown.filter(
 
 from pyspark.sql.functions import when, col
 
-# Assuming df is your DataFrame
+# Assuming df is your DataFrame  
 df = final_df.withColumn(
     "COMMITTEE_PARTY_AFFILIATION",
     when(col("COMMITTEE_PARTY_AFFILIATION").isin("REP", "DEM", "IND", "DFL"), 
@@ -308,4 +308,4 @@ df = df.withColumn(
          col("ELECTION_TP"))
     .otherwise("OTHERS") 
 )  
-df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket/final_master/")  
+df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket-uo/final_master/")  

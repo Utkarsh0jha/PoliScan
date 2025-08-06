@@ -3,36 +3,51 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-    - utkarsh
+      - utkarsh
 
 jobs:
-  upload-and-run-etl: 
+  upload-and-run-etl:
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+ 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ secrets.REGION }}    
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: IaaC
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: IaaC
+        run: terraform validate
+
+      - name: Terraform Apply
+        working-directory: IaaC
+        run: terraform apply -auto-approve
 
       - name: Upload ingestion_job.py to S3
         run: |
-          aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://cicd.try4/test1/
+          aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://tf-script-bucket-uo/ingestion/ingestion_job.py
 
       - name: Upload transformation_job.py to S3
         run: |
-          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://cicd.try4/test2/
+          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://tf-script-bucket-uo/transformed/transformation_job.py
 
       - name: Start Glue Job ingestion_job
         id: start_ingestion
         run: |
-          echo "Starting Glue job: ingestion_job"
+          echo "Starting Glue job: tf_ingestion_glue_job"
           RUN_ID=$(aws glue start-job-run \
             --job-name ingestion_job \
             --query 'JobRunId' \
@@ -63,7 +78,7 @@ jobs:
 
       - name: Start and Wait for Glue Job transformation_job
         run: |
-          echo "Starting Glue job: transformation_job"
+          echo "Starting Glue job: tf_transformation_glue_job"
           TRANSFORM_RUN_ID=$(aws glue start-job-run \
             --job-name transformation_job \
             --query 'JobRunId' \
@@ -81,7 +96,7 @@ jobs:
             echo "Current status: $STATUS"
             sleep 30
           done
-          
+
           if [[ "$STATUS" != "SUCCEEDED" ]]; then
             echo "Transformation job failed with status: $STATUS"
             exit 1
@@ -91,19 +106,19 @@ jobs:
 
       - name: Start Glue Crawler
         run: |
-          echo "Starting Glue Crawler: CI_CD_Crawler"
-          aws glue start-crawler --name CI_CD_Crawler
+          echo "Starting Glue Crawler: tf_automation_crawler"
+          aws glue start-crawler --name tf_automation_crawler
 
       - name: Wait for Crawler to Finish
         run: |
           echo "Waiting for crawler to complete..."
-          
-          while true; do 
+
+          while true; do
             STATUS=$(aws glue get-crawler \
               --name CI_CD_Crawler \
               --query 'Crawler.State' \
               --output text)
-            
+
             echo "Current crawler status: $STATUS"
 
             if [[ "$STATUS" == "READY" ]]; then
@@ -111,8 +126,8 @@ jobs:
               break
             elif [[ "$STATUS" == "FAILED" ]]; then
               echo "Crawler failed."
-              exit 1 
+              exit 1
             fi
-            
+
             sleep 30
           done
