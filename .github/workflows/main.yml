@@ -81,7 +81,7 @@ jobs:
             echo "Current status: $STATUS"
             sleep 30
           done
-
+          
           if [[ "$STATUS" != "SUCCEEDED" ]]; then
             echo "Transformation job failed with status: $STATUS"
             exit 1
