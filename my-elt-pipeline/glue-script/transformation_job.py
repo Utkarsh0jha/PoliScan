@@ -199,6 +199,7 @@ df_clean = df_clean.withColumn(
     when(col("CAND_PARTY_AFFILIATION").isNull(), "UNDEFINED").otherwise(col("CAND_PARTY_AFFILIATION"))
 )
 
+
 from pyspark.sql.functions import count,col,when,substring
 dataf = df_clean.withColumn("RPT_TP", 
     when(col("RPT_TP").isin("12P", "12G", "12C","12R","12S"), "PRE-ELECTION")
@@ -307,4 +308,4 @@ df = df.withColumn(
          col("ELECTION_TP"))
     .otherwise("OTHERS") 
 )  
-df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://ci.cd.test3/final_master/") 
+df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://ci.cd.test3/final_master/")  
