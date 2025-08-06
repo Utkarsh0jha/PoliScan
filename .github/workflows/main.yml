@@ -3,7 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - main
+      - saiteja
 
 jobs:
   upload-and-run-etl: 
@@ -81,7 +81,7 @@ jobs:
             echo "Current status: $STATUS"
             sleep 30
           done
-          
+
           if [[ "$STATUS" != "SUCCEEDED" ]]; then
             echo "Transformation job failed with status: $STATUS"
             exit 1
