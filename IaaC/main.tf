@@ -23,7 +23,7 @@ locals {
 }
 
 
-resource "aws_glue_job" "ingestion_glue_job" {
+resource "aws_glue_job" "tf_ingestion_glue_job" {
   name     = var.ingestion_glue_job
   role_arn = local.glue_role_arn
 
@@ -38,7 +38,7 @@ resource "aws_glue_job" "ingestion_glue_job" {
   worker_type       = "G.1X"
 }
 
-resource "aws_glue_job" "transformation_glue_job" {
+resource "aws_glue_job" "tf_transformation_glue_job" {
   name     = var.transformation_glue_job
   role_arn = local.glue_role_arn
 
@@ -52,7 +52,7 @@ resource "aws_glue_job" "transformation_glue_job" {
   number_of_workers = 2
   worker_type       = "G.1X"
 }
-resource "aws_glue_crawler" "glue_crawler_name" {
+resource "aws_glue_crawler" "tf_glue_crawler_name" {
   name          = var.glue_crawler_name
   role          = local.glue_role_arn
   database_name = aws_glue_catalog_database.tf_crawler_db.name
