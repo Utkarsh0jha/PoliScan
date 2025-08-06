@@ -135,7 +135,7 @@ df_all = df_all.withColumn("STATE",
         .when(col("STATE") == "OH", "Ohio")
         .when(col("STATE") == "OK", "Oklahoma")
         .when(col("STATE") == "OR", "Oregon")
-        .when(col("STATE") == "PA", "Pennsylvania")
+        .when(col("STATE") == "PA", "Pennsylvania") 
         .when(col("STATE") == "RI", "Rhode Island")
         .when(col("STATE") == "SC", "South Carolina")
         .when(col("STATE") == "SD", "South Dakota")
