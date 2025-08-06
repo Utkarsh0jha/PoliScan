@@ -61,8 +61,8 @@ resource "aws_glue_crawler" "tf_glue_crawler_name" {
     path = "s3://${aws_s3_bucket.tf-cleaned-bucket-uo.bucket}/final_master/"
   }
   depends_on = [
-    aws_glue_job.ingestion_glue_job,
-    aws_glue_job.transformation_glue_job
+    aws_glue_job.tf_ingestion_glue_job,
+    aws_glue_job.tf_transformation_glue_job
   ]
 }
 
