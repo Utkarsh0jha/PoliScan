@@ -308,4 +308,4 @@ df = df.withColumn(
          col("ELECTION_TP"))
     .otherwise("OTHERS") 
 )  
-df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf_cleaned_bucket/final_master/")  
+df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket/final_master/")  

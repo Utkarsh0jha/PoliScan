@@ -4,16 +4,16 @@ variable "region" {
 
 
 variable "tf_script_bucket" {
-  default = "tf_script_bucket"
+  default = "tf-script-bucket"
 }
 
 
 variable "tf_parquet_bucket" {
-  default = "tf_parquet_bucket"
+  default = "tf-parquet-bucket"
 }
 
 variable "tf_cleaned_bucket" {
-  default = "tf_cleaned_bucket"
+  default = "tf-cleaned-bucket"
 }
 
 variable "ingestion_glue_job" {
@@ -31,10 +31,10 @@ variable "glue_crawler_name" {
 
 #declare a script path
 variable "script_ingestion_path" {
-  default = "s3://tf_script_bucket/ingestion/ingestion_job.py"
+  default = "s3://tf-script-bucket/ingestion/ingestion_job.py"
 }
 
 #declare a script path
 variable "script_transformation_path" {
-  default = "s3://tf_script_bucket/transformation/transformation_job.py"
+  default = "s3://tf-script-bucket/transformation/transformation_job.py"
 }

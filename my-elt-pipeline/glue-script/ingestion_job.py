@@ -9,7 +9,7 @@ spark = glueContext.spark_session
 
 # Initialize the job with a static name
 job = Job(glueContext)
-job.init('ingestion_job')
+job.init('ingestion_glue_job')
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType, IntegerType
 
 
