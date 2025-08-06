@@ -306,5 +306,5 @@ df = df.withColumn(
     when(col("ELECTION_TP").isin("Primary", "General", "Runoff","Special"), 
          col("ELECTION_TP"))
     .otherwise("OTHERS") 
-)
+)  
 df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://ci.cd.test3/final_master/")
