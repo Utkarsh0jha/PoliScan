@@ -70,7 +70,7 @@ candidate_schema = StructType([
     StructField("CAND_ST2", StringType(), True),
     StructField("CAND_CITY", StringType(), True),
     StructField("CAND_ST", StringType(), True),
-    StructField("CAND_ZIP", StringType(), True)
+    StructField("CAND_ycP", StringType(), True)
 ])
 
 input_path_contribution = ['s3://poliscandata/Contribution By Ind. Data/part-00000-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv']
@@ -82,9 +82,9 @@ df_committee    = spark.read.option("delimiter", "|").schema(committee_schema).c
 df_candidate    = spark.read.option("delimiter", "|").schema(candidate_schema).csv(*input_path_candidate)
 
 
-df_contribution.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/")
-df_committee.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/")
-df_candidate.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/")
+df_contribution.write.mode("overwrite").parquet("s3://tf-parquet-bucket-yc/CI_CD(CSV+TO+PARQUET)/contribution/")
+df_committee.write.mode("overwrite").parquet("s3://tf-parquet-bucket-yc/CI_CD(CSV+TO+PARQUET)/committee/")
+df_candidate.write.mode("overwrite").parquet("s3://tf-parquet-bucket-yc/CI_CD(CSV+TO+PARQUET)/candidate/")
 
 
  

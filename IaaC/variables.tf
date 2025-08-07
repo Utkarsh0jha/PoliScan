@@ -3,17 +3,17 @@ variable "region" {
 }
 
 
-variable "tf-script-bucket-uo" {
-  default = "tf-script-bucket-uo"
+variable "tf-script-bucket-yc" {
+  default = "tf-script-bucket-yc"
 }
 
 
-variable "tf-parquet-bucket-uo" {
-  default = "tf-parquet-bucket-uo"
+variable "tf-parquet-bucket-yc" {
+  default = "tf-parquet-bucket-yc"
 }
 
-variable "tf-cleaned-bucket-uo" {
-  default = "tf-cleaned-bucket-uo"
+variable "tf-cleaned-bucket-yc" {
+  default = "tf-cleaned-bucket-yc"
 }
 
 variable "tf_ingestion_glue_job" {
