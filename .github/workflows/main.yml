@@ -3,11 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-<<<<<<< HEAD
-    - main
-=======
-      - utkarsh
->>>>>>> 9ace58c1af431d6dda028f9099e911d97952921a
+      - yogeshree
 
 jobs:
   upload-and-run-etl:
@@ -23,41 +19,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-<<<<<<< HEAD
-          aws-region: ${{ secrets.REGION }}  
-=======
           aws-region: ${{ secrets.REGION }}
->>>>>>> 9ace58c1af431d6dda028f9099e911d97952921a
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-<<<<<<< HEAD
-        working-directory:IaaC
-        
-        run: terraform init
-        
-
-      - name: Terraform Validate
-        working-directory:IaaC
-        
-        run: terraform validate
-        
-
-      - name: Terraform Apply
-        working-directory:IaaC   
-        
-        run: terraform apply -auto-approve  
-
-      - name: Upload ingestion_job.py to S3
-        run: |
-          aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://tf_glue_automation/ingestion/
-
-      - name: Upload transformation_job.py to S3
-        run: |
-          aws s3 cp my-elt-pipeline/glue-script/transformation_job.py s3://tf_glue_automation/transformation/
-=======
         working-directory: IaaC
         run: terraform init
 
@@ -76,7 +43,6 @@ jobs:
       - name: Upload transformation_job.py to S3
         run: |
           aws s3 cp my-elt-pipeline/glue-script/tf_transformation_job.py s3://tf-script-bucket-uo/transformed/tf_transformation_glue_job.py
->>>>>>> 9ace58c1af431d6dda028f9099e911d97952921a
 
       - name: Start Glue Job tf_ingestion_glue_job
         id: start_ingestion
@@ -140,11 +106,7 @@ jobs:
 
       - name: Start Glue Crawler
         run: |
-<<<<<<< HEAD
-          echo "Starting Glue Crawler: CI_CD_Crawler"
-=======
           echo "Starting Glue Crawler: tf_automation_crawler"
->>>>>>> 9ace58c1af431d6dda028f9099e911d97952921a
           aws glue start-crawler --name tf_automation_crawler
 
       - name: Wait for Crawler to Finish

@@ -16,7 +16,7 @@ resource "aws_glue_catalog_database" "tf_crawler_db" {
   name = "tf_crawler_db"
 }
 
- 
+
 
 locals {
   glue_role_arn = "arn:aws:iam::968164097585:role/LabRole"
@@ -56,22 +56,6 @@ resource "aws_glue_crawler" "tf_glue_crawler_name" {
   name          = var.glue_crawler_name
   role          = local.glue_role_arn
   database_name = aws_glue_catalog_database.tf_crawler_db.name
-  
-  s3_ingestion{
-    path = "s3://${aws_s3_bucket.tf_ingestion_bucket.bucket}/tf_parquet_data/"
-    }
-    s3_transformation{
-    path = "s3://${aws_s3_bucket.tf_transformation_bucket.bucket}/tf_cleaned_data/"
-    }
-    depends_on
-}
-
-
-
-resource "aws_glue_crawler" "etl_crawler" {
-  name          = var.glue_crawler_name
-  role          = local.glue_role_arn
-  database_name = aws_glue_catalog_database.etl_db.name
 
   s3_target {
     path = "s3://${aws_s3_bucket.tf-cleaned-bucket-uo.bucket}/final_master/"
@@ -81,6 +65,3 @@ resource "aws_glue_crawler" "etl_crawler" {
     aws_glue_job.tf_transformation_glue_job
   ]
 }
-
-
-
