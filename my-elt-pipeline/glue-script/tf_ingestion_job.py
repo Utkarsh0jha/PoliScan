@@ -98,7 +98,7 @@ input_path_candidate = [
     "s3a://candidatemaster/cm/cn16.txt",
     "s3a://candidatemaster/cm/cn18.txt",
     "s3a://candidatemaster/cm/cn20.txt",
-    "s3a://candidatemaster/cm/cn22.txt",
+    "s3a://candidatemaster/cm/cn22.txt", 
     "s3a://candidatemaster/cm/cn24.txt",
     "s3a://candidatemaster/cm/cn26.txt"
 ]
