@@ -10,7 +10,7 @@ resource "aws_glue_catalog_database" "tf_crawler_db" {
   name = "tf_crawler_db"
 }
 
-
+ 
 
 locals {
   glue_role_arn = "arn:aws:iam::951764799690:role/LabRole"
@@ -56,10 +56,10 @@ resource "aws_glue_crawler" "glue_crawler_name" {
   s3_ingestion{
     path = "s3://${aws_s3_bucket.tf_ingestion_bucket.bucket}/tf_parquet_data/"
     }
-    s3_transformation{
+  s3_transformation{
     path = "s3://${aws_s3_bucket.tf_transformation_bucket.bucket}/tf_cleaned_data/"
     }
-    depends_on
+    depends_on = [aws_glue_job.ingestion_glue_job,aws_glue_job.transformation_glue_job]
 }
 
 
