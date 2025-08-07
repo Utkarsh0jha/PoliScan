@@ -9,7 +9,7 @@ spark = glueContext.spark_session
 
 # Initialize the job with a static name
 job = Job(glueContext)
-job.init('ingestion_job')
+job.init('ingestion_glue_job')
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, LongType, IntegerType
 
 
@@ -81,11 +81,18 @@ df_contribution = spark.read.option("delimiter", "|").schema(contribution_schema
 df_committee    = spark.read.option("delimiter", "|").schema(committee_schema).csv(*input_path_committee)
 df_candidate    = spark.read.option("delimiter", "|").schema(candidate_schema).csv(*input_path_candidate)
 
+<<<<<<< HEAD:my-elt-pipeline/glue-script/ingestion_job.py
 df_contribution.write.mode("overwrite").parquet("s3://tf_ingestion_bucket/CI_CD(CSV+TO+PARQUET)/contribution/")
 df_committee.write.mode("overwrite").parquet("s3://tf_ingestion_bucket/CI_CD(CSV+TO+PARQUET)/committee/")
 df_candidate.write.mode("overwrite").parquet("s3://tf_ingestion_bucket/CI_CD(CSV+TO+PARQUET)/candidate/")
+=======
+df_contribution.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/")
+df_committee.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/")
+df_candidate.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/")
+>>>>>>> 9ace58c1af431d6dda028f9099e911d97952921a:my-elt-pipeline/glue-script/tf_ingestion_job.py
 
  
 # Finish the job 
 job.commit()
 print("✅ Glue job completed successfully.")
+ 
