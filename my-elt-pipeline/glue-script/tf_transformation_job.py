@@ -12,13 +12,13 @@ spark = glueContext.spark_session
 
 # Define Schemas
 contribution_paths = [
-    "s3://s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/"
+    "s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/"
 ]
 committee_paths = [
-    "s3://s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/"
+    "s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/"
 ]
 candidate_paths = [
-    "s3://s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/"
+    "s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/"
 ]
 
 # Read Parquet Files

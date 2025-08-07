@@ -31,10 +31,10 @@ variable "glue_crawler_name" {
 
 #declare a script path
 variable "script_ingestion_path" {
-  default = "s3://tf-script-bucket-uo/ingestion/ingestion_job.py"
+  default = "s3://tf-script-bucket-uo/ingestion/tf_ingestion_glue_job.py"
 }
 
 #declare a script path
 variable "script_transformation_path" {
-  default = "s3://tf-script-bucket-uo/transformation/transformation_job.py"
+  default = "s3://tf-script-bucket-uo/transformed/tf_transformation_glue_job.py"
 }
