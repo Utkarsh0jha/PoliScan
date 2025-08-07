@@ -94,7 +94,7 @@ input_path_committee = [
 ]
 
 input_path_candidate = [
-    "s3a://candidatemaster/cm/cn14.txt",
+    "s3a://candidatemaster/cm/cn14.txt", 
     "s3a://candidatemaster/cm/cn16.txt",
     "s3a://candidatemaster/cm/cn18.txt",
     "s3a://candidatemaster/cm/cn20.txt",
