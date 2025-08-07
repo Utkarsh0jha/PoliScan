@@ -28,7 +28,7 @@ resource "aws_glue_job" "tf_ingestion_glue_job" {
   role_arn = local.glue_role_arn
 
   command {
-    name            = "ingestion_glue_job"
+    name            = "glueetl"
     script_location = var.script_ingestion_path
     python_version  = "3"
   }
@@ -43,7 +43,7 @@ resource "aws_glue_job" "tf_transformation_glue_job" {
   role_arn = local.glue_role_arn
 
   command {
-    name            = "transformation_glue_job"
+    name            = "glueetl"
     script_location = var.script_transformation_path
     python_version  = "3"
   }
