@@ -1,36 +1,39 @@
 import sys
-from awsglue.context import GlueContext
 from pyspark.context import SparkContext
+from awsglue.context import GlueContext
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import *
+from pyspark.sql.functions import (
+    col, when, upper, substring, to_date, trim, regexp_replace
+)
+from pyspark.sql.types import DoubleType
 
 # Initialize Spark and Glue Context
 sc = SparkContext()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 
-# Define Paths
+# Define input paths
 contribution_paths = ["s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/"]
 committee_paths = ["s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/"]
 candidate_paths = ["s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/"]
 
-# Read Parquet Data
+# Read data from Parquet
 df_contribution = spark.read.parquet(*contribution_paths)
 df_committee = spark.read.parquet(*committee_paths).dropDuplicates(["CMTE_ID"])
 df_candidate = spark.read.parquet(*candidate_paths).dropDuplicates(["CAND_ID"])
 
-# Join all three datasets
+# Join datasets
 contrib_committee_df = df_contribution.join(df_committee, "CMTE_ID", "inner")
 final_master_df = contrib_committee_df.join(df_candidate, "CAND_ID", "inner")
 
-# Select necessary columns and rename
+# Select and rename relevant columns
 final_master_df = final_master_df.select(
     df_contribution["*"],
     df_committee["CMTE_PTY_AFFILIATION"].alias("committee_party_affiliation"),
     df_candidate["CAND_PTY_AFFILIATION"].alias("CAND_PARTY_AFFILIATION")
 )
 
-# Clean nulls and standardize values
+# Fill missing values
 df = final_master_df.fillna({
     "MEMO_CD": "I",
     "OTHER_ID": "Individual",
@@ -39,6 +42,7 @@ df = final_master_df.fillna({
     "OCCUPATION": "Unknown"
 })
 
+# Clean AMNDT_IND and ENTITY_TP values
 df = df.withColumn("AMNDT_IND", when(col("AMNDT_IND") == "N", "NEW")
     .when(col("AMNDT_IND") == "A", "AMENDMENTED")
     .when(col("AMNDT_IND") == "T", "TERMINATE")
@@ -56,7 +60,7 @@ df = df.withColumn("ENTITY_TP", when(col("ENTITY_TP") == "CCM", "CANDIDATE COMMI
 )
 df = df.withColumn("ENTITY_TP", upper(col("ENTITY_TP")))
 
-# State name mapping
+# Map state abbreviations to full names
 df = df.withColumn("STATE", upper(
     when(col("STATE") == "AL", "Alabama")
     .when(col("STATE") == "AK", "Alaska")
@@ -127,7 +131,7 @@ df = df.withColumn("STATE", upper(
     .otherwise("Other / Unknown")
 ))
 
-# More null value handling
+# Fill additional nulls
 df = df.fillna({
     "ZIP_CODE": "ANONYMOUS",
     "committee_party_affiliation": "UNRECOGNIZE",
@@ -137,10 +141,10 @@ df = df.fillna({
     "NAME": "UNIDENTIFIED"
 })
 
-# Remove rows with null/blank transaction date
+# Filter rows with valid TRANSACTION_DT
 df = df.filter((col("TRANSACTION_DT").isNotNull()) & (trim(col("TRANSACTION_DT")) != ""))
 
-# Additional party and type cleaning
+# Clean party affiliations
 df = df.withColumn("committee_party_affiliation", 
     when(col("committee_party_affiliation") == ".", "UNDEFINED")
     .otherwise(col("committee_party_affiliation"))
@@ -150,7 +154,7 @@ df = df.withColumn("CAND_PARTY_AFFILIATION",
     .otherwise(col("CAND_PARTY_AFFILIATION"))
 )
 
-# Election type and year
+# Election type and year parsing
 df = df.withColumn("RPT_TP", 
     when(col("RPT_TP").isin("12P", "12G", "12C","12R","12S"), "PRE-ELECTION")
     .when(col("RPT_TP").isin("30G", "30P", "30D","30R","30S","60D"), "POST-ELECTION")
@@ -167,29 +171,30 @@ df = df.withColumn("ELECTION_TP",
     .when(substring("TRANSACTION_PGI", 1, 1) == "O", "Other")
     .otherwise("Unknown")
 )
+
 df = df.withColumn("ELECTION_YEAR", substring("TRANSACTION_PGI", 2, 4)).drop("TRANSACTION_PGI")
 
-# ✅ Correct ELECTION_YEAR handling
 df = df.withColumn("ELECTION_YEAR",
     when(col("ELECTION_YEAR").isNull() | (trim(col("ELECTION_YEAR")) == ""), "UNKNOWN")
     .otherwise(col("ELECTION_YEAR"))
 )
+
 df = df.withColumn("ELECTION_YEAR",
     when(col("ELECTION_YEAR").cast("int").between(2000, 2012) |
          col("ELECTION_YEAR").cast("int").between(2026, 2030), "UNKNOWN")
     .otherwise(col("ELECTION_YEAR"))
 )
+
 final_df = df.filter(
     (col("ELECTION_YEAR") == "UNKNOWN") |
     (col("ELECTION_YEAR").cast("int").between(2013, 2025))
 )
 
-# Clean and parse transaction date
+# Parse date and amount fields
 final_df = final_df.withColumn("TRANSACTION_DT", to_date("TRANSACTION_DT", "MMddyyyy"))
 final_df = final_df.filter(col("TRANSACTION_DT").isNotNull())
 
-# Amount fields
-final_df = final_df.withColumn("transaction_amt", col("transaction_amt").cast("double"))
+final_df = final_df.withColumn("transaction_amt", col("transaction_amt").cast(DoubleType()))
 final_df = final_df.withColumn("CONTRIBUTION_AMT", 
     when(col("transaction_amt") > 0, col("transaction_amt")).otherwise(None))
 final_df = final_df.withColumn("REFUND_AMT", 
@@ -197,21 +202,22 @@ final_df = final_df.withColumn("REFUND_AMT",
 final_df = final_df.drop("transaction_amt")
 final_df = final_df.fillna({"CONTRIBUTION_AMT": 0, "REFUND_AMT": 0})
 
-# Final party cleanup
+# Final cleanup and grouping
 final_df = final_df.withColumn("committee_party_affiliation", 
     regexp_replace(regexp_replace("committee_party_affiliation", r"\(I\)", "UNDEFINED"), r"\.", "UNDEFINED")
 ).withColumnRenamed("committee_party_affiliation", "COMMITTEE_PARTY_AFFILIATION")
 
-# Simplify values to useful groups
 df = final_df.withColumn("COMMITTEE_PARTY_AFFILIATION", 
     when(col("COMMITTEE_PARTY_AFFILIATION").isin("REP", "DEM", "IND", "DFL"), col("COMMITTEE_PARTY_AFFILIATION"))
     .otherwise("OTHERS"))
+
 df = df.withColumn("ENTITY_TP", 
     when(col("ENTITY_TP").isin("INDIVIDUAL", "CANDIDATE", "POLITICAL ACTION COMMITTEE"), col("ENTITY_TP"))
     .otherwise("OTHERS"))
+
 df = df.withColumn("ELECTION_TP", 
     when(col("ELECTION_TP").isin("Primary", "General", "Runoff", "Special"), col("ELECTION_TP"))
     .otherwise("OTHERS"))
 
-# Write output to S3
+# Write output to S3 in Parquet format
 df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket-uo/final_master/")
