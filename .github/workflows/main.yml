@@ -3,7 +3,11 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
+<<<<<<< HEAD
       - prathmesh
+=======
+      - utkarsh
+>>>>>>> 62238657fca47cc977b8d71b1687544b95a9eaef
 
 jobs:
   upload-and-run-etl: 
@@ -12,7 +16,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 62238657fca47cc977b8d71b1687544b95a9eaef
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -21,6 +29,7 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.REGION }}
 
+<<<<<<< HEAD
       - name: Upload ingestion_job.py to S3
         run: |
           aws s3 cp my-elt-pipeline/glue-script/ingestion_job.py s3://cicd.try4/test1/
@@ -47,6 +56,49 @@ jobs:
           while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
             STATUS=$(aws glue get-job-run \
               --job-name ingestion_job \
+=======
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: IaaC
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: IaaC
+        run: terraform validate
+
+      - name: Terraform Apply
+        working-directory: IaaC
+        run: terraform apply -auto-approve
+
+      - name: Upload ingestion_job.py to S3
+        run: |
+          aws s3 cp my-elt-pipeline/glue-script/tf_ingestion_job.py s3://tf-script-bucket-uo/ingestion/tf_ingestion_glue_job.py
+
+      - name: Upload transformation_job.py to S3
+        run: |
+          aws s3 cp my-elt-pipeline/glue-script/tf_transformation_job.py s3://tf-script-bucket-uo/transformed/tf_transformation_glue_job.py
+
+      - name: Start Glue Job tf_ingestion_glue_job
+        id: start_ingestion
+        run: |
+          echo "Starting Glue job: tf_ingestion_glue_job"
+          RUN_ID=$(aws glue start-job-run \
+            --job-name tf_ingestion_glue_job \
+            --query 'JobRunId' \
+            --output text)
+          echo "Glue tf_ingestion_glue_job started with Run ID: $RUN_ID"
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Wait for tf_ingestion_glue_job to complete
+        run: |
+          echo "Waiting for tf_ingestion_glue_job to complete..."
+          STATUS="STARTING"
+          while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
+            STATUS=$(aws glue get-job-run \
+              --job-name tf_ingestion_glue_job \
+>>>>>>> 62238657fca47cc977b8d71b1687544b95a9eaef
               --run-id ${{ steps.start_ingestion.outputs.run_id }} \
               --query 'JobRun.JobRunState' \
               --output text)
@@ -61,6 +113,7 @@ jobs:
 
           echo "Ingestion job completed successfully."
 
+<<<<<<< HEAD
       - name: Start and Wait for Glue Job transformation_job
         run: |
           echo "Starting Glue job: transformation_job"
@@ -75,6 +128,22 @@ jobs:
           while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
             STATUS=$(aws glue get-job-run \
               --job-name transformation_job \
+=======
+      - name: Start and Wait for Glue Job tf_transformation_glue_job
+        run: |
+          echo "Starting Glue job: tf_transformation_glue_job"
+          TRANSFORM_RUN_ID=$(aws glue start-job-run \
+            --job-name tf_transformation_glue_job \
+            --query 'JobRunId' \
+            --output text)
+          echo "Glue tf_transformation_glue_job started with Run ID: $TRANSFORM_RUN_ID"
+
+          echo "Waiting for tf_transformation_glue_job to complete..."
+          STATUS="STARTING"
+          while [[ "$STATUS" == "STARTING" || "$STATUS" == "RUNNING" || "$STATUS" == "STOPPING" ]]; do
+            STATUS=$(aws glue get-job-run \
+              --job-name tf_transformation_glue_job \
+>>>>>>> 62238657fca47cc977b8d71b1687544b95a9eaef
               --run-id $TRANSFORM_RUN_ID \
               --query 'JobRun.JobRunState' \
               --output text)
@@ -91,12 +160,18 @@ jobs:
 
       - name: Start Glue Crawler
         run: |
+<<<<<<< HEAD
           echo "Starting Glue Crawler: CI_CD_Crawler"
           aws glue start-crawler --name CI_CD_Crawler
+=======
+          echo "Starting Glue Crawler: tf_automation_crawler"
+          aws glue start-crawler --name tf_automation_crawler
+>>>>>>> 62238657fca47cc977b8d71b1687544b95a9eaef
 
       - name: Wait for Crawler to Finish
         run: |
           echo "Waiting for crawler to complete..."
+<<<<<<< HEAD
           
           while true; do 
             STATUS=$(aws glue get-crawler \
@@ -104,6 +179,15 @@ jobs:
               --query 'Crawler.State' \
               --output text)
             
+=======
+
+          while true; do
+            STATUS=$(aws glue get-crawler \
+              --name tf_automation_crawler \
+              --query 'Crawler.State' \
+              --output text)
+
+>>>>>>> 62238657fca47cc977b8d71b1687544b95a9eaef
             echo "Current crawler status: $STATUS"
 
             if [[ "$STATUS" == "READY" ]]; then
@@ -111,8 +195,16 @@ jobs:
               break
             elif [[ "$STATUS" == "FAILED" ]]; then
               echo "Crawler failed."
+<<<<<<< HEAD
               exit 1 
             fi
             
             sleep 30
           done
+=======
+              exit 1
+            fi
+
+            sleep 30
+          done
+>>>>>>> 62238657fca47cc977b8d71b1687544b95a9eaef
