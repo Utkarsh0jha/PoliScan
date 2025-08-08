@@ -73,7 +73,15 @@ candidate_schema = StructType([
     StructField("CAND_ZIP", StringType(), True)
 ])
 
-input_path_contribution = "s3://poliscan/Cont.By.Ind/*.csv"
+input_path_contribution = [
+    "s3://poliscandata/Contribution By Ind. Data/part-00000-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv",
+    "s3://poliscandata/Contribution By Ind. Data/part-00001-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv",
+    "s3://poliscandata/Contribution By Ind. Data/part-00002-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv",
+    "s3://poliscandata/Contribution By Ind. Data/part-00003-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv",
+    "s3://poliscandata/Contribution By Ind. Data/part-00004-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv",
+    "s3://poliscandata/Contribution By Ind. Data/part-00005-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv",
+    "s3://poliscandata/Contribution By Ind. Data/part-00006-1890e79d-5e29-4109-b09f-5787abe0d43d-c000.csv"
+]
 
 input_path_committee = [
     "s3://transformationpratham/commitie master/cm-13-14.txt",
@@ -84,7 +92,7 @@ input_path_committee = [
     "s3://transformationpratham/commitie master/cm19-20.txt",
     "s3://transformationpratham/commitie master/cm25-26.txt"
 ]
- 
+
 input_path_candidate = [
     "s3://candidatemaster/cm/cn14.txt", 
     "s3://candidatemaster/cm/cn16.txt",
