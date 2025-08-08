@@ -10,9 +10,9 @@ glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 
 # Define Paths
-contribution_paths = ["s3://tf-parquet-bucket-pc/CI_CD(CSV+TO+PARQUET)/contribution/"]
-committee_paths = ["s3://tf-parquet-bucket-pc/CI_CD(CSV+TO+PARQUET)/committee/"]
-candidate_paths = ["s3://tf-parquet-bucket-pc/CI_CD(CSV+TO+PARQUET)/candidate/"]
+contribution_paths = ["s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/"]
+committee_paths = ["s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/"]
+candidate_paths = ["s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/"]
 
 # Read Parquet Data
 df_contribution = spark.read.parquet(*contribution_paths)

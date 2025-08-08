@@ -3,8 +3,8 @@ resource "aws_s3_bucket" "tf-script-bucket-uo" {
 }
 
 
-resource "aws_s3_bucket" "tf-parquet-bucket-pc" {
-  bucket = var.tf-parquet-bucket-pc
+resource "aws_s3_bucket" "tf-parquet-bucket-uo" {
+  bucket = var.tf-parquet-bucket-uo
 }
 
 
