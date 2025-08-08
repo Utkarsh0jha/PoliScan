@@ -84,7 +84,7 @@ input_path_committee = [
     "s3://transformationpratham/commitie master/cm19-20.txt",
     "s3://transformationpratham/commitie master/cm25-26.txt"
 ]
-
+ 
 input_path_candidate = [
     "s3://candidatemaster/cm/cn14.txt", 
     "s3://candidatemaster/cm/cn16.txt",
