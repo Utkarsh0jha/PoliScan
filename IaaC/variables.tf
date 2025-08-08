@@ -6,8 +6,8 @@ variable "region" {
 variable "tf-script-bucket-uo" {
   default = "tf-script-bucket-uo"
 }
-variable "tf-parquet-bucket-uo" {
-  default = "tf-parquet-bucket-uo"
+variable "tf-parquet-bucket-pc" {
+  default = "tf-parquet-bucket-pc"
 }
 
 variable "tf-cleaned-bucket-uo" {

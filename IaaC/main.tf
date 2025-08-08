@@ -3,8 +3,8 @@ resource "aws_s3_bucket" "tf-script-bucket-uo" {
 }
 
 
-resource "aws_s3_bucket" "tf-parquet-bucket-uo" {
-  bucket = var.tf-parquet-bucket-uo
+resource "aws_s3_bucket" "tf-parquet-bucket-pc" {
+  bucket = var.tf-parquet-bucket-pc
 }
 
 
@@ -55,7 +55,7 @@ resource "aws_glue_job" "tf_transformation_glue_job" {
 resource "aws_glue_crawler" "tf_glue_crawler_name" {
   name          = var.glue_crawler_name
   role          = local.glue_role_arn
-  database_name = aws_glue_catalog_database.tf_crawler_db.name
+  database_name = aws_glue_catalog_database.pc
 
   s3_target {
     path = "s3://${aws_s3_bucket.tf-cleaned-bucket-uo.bucket}/final_master/"
