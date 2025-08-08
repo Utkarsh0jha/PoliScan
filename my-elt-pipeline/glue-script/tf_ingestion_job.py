@@ -104,9 +104,9 @@ input_path_candidate = [
 ]
 
 
-df_contribution = spark.read.option("delimiter", "|").schema(contribution_schema).csv(input_path_contribution)
-df_committee    = spark.read.option("delimiter", "|").schema(committee_schema).csv(input_path_committee)
-df_candidate    = spark.read.option("delimiter", "|").schema(candidate_schema).csv(input_path_candidate)
+df_contribution = spark.read.option("delimiter", "|").schema(contribution_schema).csv(*input_path_contribution)
+df_committee    = spark.read.option("delimiter", "|").schema(committee_schema).csv(*input_path_committee)
+df_candidate    = spark.read.option("delimiter", "|").schema(candidate_schema).csv(*input_path_candidate)
 
 df_contribution.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/contribution/")
 df_committee.write.mode("overwrite").parquet("s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/committee/")
