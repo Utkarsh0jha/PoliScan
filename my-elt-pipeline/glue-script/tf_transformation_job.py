@@ -50,6 +50,28 @@ final_master_df = final_master_df.select(
     df_candidate["CAND_PTY_AFFILIATION"].alias("CAND_PARTY_AFFILIATION")
 )
 
+from pyspark.sql.functions import when,upper
+
+df = final_master_df.withColumn(
+    "MEMO_CD",
+    when(col("MEMO_CD").isNull(), "I").otherwise(col("MEMO_CD"))
+)
+
+df = df.withColumn(
+    "OTHER_ID",
+    when(col("OTHER_ID").isNull(), "Individual").otherwise(col("OTHER_ID"))
+)
+
+df = df.withColumn(
+    "MEMO_TEXT",
+    when(col("MEMO_TEXT").isNull(), "Unknown").otherwise(col("MEMO_TEXT"))
+)
+
+df = df.fillna({
+    "EMPLOYER": "Unknown",
+    "OCCUPATION": "Unknown"
+})
+
 df_all = df.withColumn(
     "AMNDT_IND",
     when(col("AMNDT_IND") == "N", "NEW")
@@ -149,14 +171,12 @@ df_all = df_all.withColumn("STATE",
 df_all = df_all \
     .withColumn("ZIP_CODE", when(col("ZIP_CODE").isNull(), "ANONYMOUS").otherwise(col("ZIP_CODE"))) \
     .withColumn("committee_party_affiliation", when(col("committee_party_affiliation").isNull(), "UNRECOGNIZE").otherwise(col("committee_party_affiliation"))) \
-    .withColumn("MEMO_CD", when(col("MEMO_CD").isNull(), "I").otherwise(col("MEMO_CD"))) \
-    .withColumn("OTHER_ID", when(col("OTHER_ID").isNull(), "INDIVIDUAL").otherwise(col("OTHER_ID")))
+        
     
 df_all = df_all.fillna({
     "EMPLOYER": "UNKNOWN",
     "OCCUPATION": "UNKNOWN",
     "CITY": "UNIDENTIFIED",
-    "MEMO_TEXT": "ANONYMOUS",
     "NAME": "UNIDENTIFIED"
 })
 
@@ -286,4 +306,4 @@ df = df.withColumn(
          col("ELECTION_TP"))
     .otherwise("OTHERS") 
 )  
-df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket-uo/final_master/")  
+df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket-uo/final_master/")
