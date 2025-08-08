@@ -50,28 +50,6 @@ final_master_df = final_master_df.select(
     df_candidate["CAND_PTY_AFFILIATION"].alias("CAND_PARTY_AFFILIATION")
 )
 
-from pyspark.sql.functions import when,upper
-
-df = final_master_df.withColumn(
-    "MEMO_CD",
-    when(col("MEMO_CD").isNull(), "I").otherwise(col("MEMO_CD"))
-)
-
-df = df.withColumn(
-    "OTHER_ID",
-    when(col("OTHER_ID").isNull(), "Individual").otherwise(col("OTHER_ID"))
-)
-
-df = df.withColumn(
-    "MEMO_TEXT",
-    when(col("MEMO_TEXT").isNull(), "Unknown").otherwise(col("MEMO_TEXT"))
-)
-
-df = df.fillna({
-    "EMPLOYER": "Unknown",
-    "OCCUPATION": "Unknown"
-})
-
 df_all = df.withColumn(
     "AMNDT_IND",
     when(col("AMNDT_IND") == "N", "NEW")
@@ -291,7 +269,7 @@ from pyspark.sql.functions import when, col
 
 # Assuming df is your DataFrame  
 df = final_df.withColumn(
-    "COMMITTEE_PARTY_AFFILIATION",
+    "COMMITTEE_PARTY_AFFILIATION",    
     when(col("COMMITTEE_PARTY_AFFILIATION").isin("REP", "DEM", "IND", "DFL"), 
          col("COMMITTEE_PARTY_AFFILIATION"))
     .otherwise("OTHERS")
