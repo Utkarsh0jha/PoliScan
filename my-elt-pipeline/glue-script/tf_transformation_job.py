@@ -266,4 +266,4 @@ df = final_df.withColumn(
 )
 
 # Write output
-df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket-uo/final_master/")
+df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket-uo/final_master/") 
