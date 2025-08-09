@@ -154,7 +154,7 @@ df_all = df_all.withColumn(
         .otherwise("Other / Unknown")
     )
 )
-
+ 
 # Fill remaining nulls
 df_all = df_all \
     .withColumn("ZIP_CODE", when(col("ZIP_CODE").isNull(), "ANONYMOUS").otherwise(col("ZIP_CODE"))) \
