@@ -26,7 +26,6 @@ df_committee = df_committee.dropDuplicates(["CMTE_ID"])
 df_candidate = df_candidate.dropDuplicates(["CAND_ID"])
 
 
-# Join datasets
 from pyspark.sql.functions import col
 
 contrib_committee_df = df_contribution.join(
@@ -40,6 +39,7 @@ final_master_df = contrib_committee_df.join(
     contrib_committee_df["CAND_ID"] == df_candidate["CAND_ID"],
     "inner"
 )
+
 # Select and rename relevant columns
 final_master_df = final_master_df.select(
     df_contribution["*"],
@@ -186,53 +186,94 @@ df = df.withColumn("ELECTION_TP",
     .otherwise("Unknown")
 )
 
-df = df.withColumn("ELECTION_YEAR", substring("TRANSACTION_PGI", 2, 4)).drop("TRANSACTION_PGI")
+df = df.withColumn("ELECTION_YEAR", substring("TRANSACTION_PGI", 2, 4))
 
+df = df.drop("TRANSACTION_PGI")
+from pyspark.sql.functions import col, when, trim, to_date
 df = df.withColumn("ELECTION_YEAR",
     when(col("ELECTION_YEAR").isNull() | (trim(col("ELECTION_YEAR")) == ""), "UNKNOWN")
     .otherwise(col("ELECTION_YEAR"))
 )
 
-df = df.withColumn("ELECTION_YEAR",
-    when(col("ELECTION_YEAR").cast("int").between(2000, 2012) |
-         col("ELECTION_YEAR").cast("int").between(2026, 2030), "UNKNOWN")
+df = df.withColumn(
+    "TRANSACTION_DT",
+    to_date("TRANSACTION_DT", "MMddyyyy")
+)
+
+# df = df.withColumn("ELECTION_YEAR",
+#     when(col("ELECTION_YEAR").cast("int").between(2000, 2012) |
+#          col("ELECTION_YEAR").cast("int").between(2026, 2030), "UNKNOWN")
+#     .otherwise(col("ELECTION_YEAR"))
+# )
+
+from pyspark.sql.functions import year, col
+
+final_df = df.filter(
+    (year(col("TRANSACTION_DT")) >= 2013) & (year(col("TRANSACTION_DT")) <= 2025)
+)
+final_df = final_df.drop("MEMO_TEXT")
+final_df = final_df.filter(final_df.TRANSACTION_DT.isNotNull())
+final_df = final_df.withColumn("transaction_amt", col("transaction_amt").cast("double"))
+
+final_df = final_df.withColumn(
+    "CONTRIBUTION_AMT",
+    when(col("transaction_amt") > 0, col("transaction_amt")).otherwise(None)
+).withColumn(
+    "REFUND_AMT",
+    when(col("transaction_amt") < 0, -col("transaction_amt")).otherwise(None)
+)
+
+final_df = final_df.na.fill({"CONTRIBUTION_AMT": 0, "REFUND_AMT": 0})
+final_df = final_df.drop("transaction_amt")
+# Final cleanup and grouping
+final_df = final_df.withColumn(
+    "committee_party_affiliation",
+    regexp_replace(
+        regexp_replace("committee_party_affiliation", r"\(I\)", "UNDEFINED"),
+        r"\.", "UNDEFINED"
+    )
+)
+final_df = final_df.withColumnRenamed("committee_party_affiliation", "COMMITTEE_PARTY_AFFILIATION")
+
+filtered_df = final_df.filter((df_final.ELECTION_YEAR >= 2013) & (df_final.ELECTION_YEAR <= 2025))
+
+from pyspark.sql.functions import col, when
+
+# Step 1: Replace years with "UNKNOWN" in the given ranges
+df_with_unknown = filtered_df.withColumn(
+    "ELECTION_YEAR",
+    when((col("ELECTION_YEAR") >= 2000) & (col("ELECTION_YEAR") <= 2012), "UNKNOWN")
+    .when((col("ELECTION_YEAR") >= 2026) & (col("ELECTION_YEAR") <= 2030), "UNKNOWN")
     .otherwise(col("ELECTION_YEAR"))
 )
 
-final_df = df.filter(
-    (col("ELECTION_YEAR") == "UNKNOWN") |
-    (col("ELECTION_YEAR").cast("int").between(2013, 2025))
+# Step 2: Keep only rows with year between 2013–2025 or now labeled as "UNKNOWN"
+final_df = df_with_unknown.filter(
+    (col("ELECTION_YEAR") == "UNKNOWN") | (
+                (col("ELECTION_YEAR").cast("int") >= 2013) & (col("ELECTION_YEAR").cast("int") <= 2025))
 )
-final_df=final_df.drop("MEMO_TEXT")
 
-# Parse date and amount fields
-final_df = final_df.withColumn("TRANSACTION_DT", to_date("TRANSACTION_DT", "MMddyyyy"))
-final_df = final_df.filter(col("TRANSACTION_DT").isNotNull())
+from pyspark.sql.functions import when, col
 
-final_df = final_df.withColumn("transaction_amt", col("transaction_amt").cast(DoubleType()))
-final_df = final_df.withColumn("CONTRIBUTION_AMT", 
-    when(col("transaction_amt") > 0, col("transaction_amt")).otherwise(None))
-final_df = final_df.withColumn("REFUND_AMT", 
-    when(col("transaction_amt") < 0, -col("transaction_amt")).otherwise(None))
-final_df = final_df.drop("transaction_amt")
-final_df = final_df.fillna({"CONTRIBUTION_AMT": 0, "REFUND_AMT": 0})
-
-# Final cleanup and grouping
-final_df = final_df.withColumn("committee_party_affiliation", 
-    regexp_replace(regexp_replace("committee_party_affiliation", r"\(I\)", "UNDEFINED"), r"\.", "UNDEFINED")
-).withColumnRenamed("committee_party_affiliation", "COMMITTEE_PARTY_AFFILIATION")
-
-df = final_df.withColumn("COMMITTEE_PARTY_AFFILIATION", 
-    when(col("COMMITTEE_PARTY_AFFILIATION").isin("REP", "DEM", "IND", "DFL"), col("COMMITTEE_PARTY_AFFILIATION"))
-    .otherwise("OTHERS"))
-
-df = df.withColumn("ENTITY_TP", 
-    when(col("ENTITY_TP").isin("INDIVIDUAL", "CANDIDATE", "POLITICAL ACTION COMMITTEE"), col("ENTITY_TP"))
-    .otherwise("OTHERS"))
-
-df = df.withColumn("ELECTION_TP", 
-    when(col("ELECTION_TP").isin("Primary", "General", "Runoff", "Special"), col("ELECTION_TP"))
-    .otherwise("OTHERS"))
+# Assuming df is your DataFrame
+df = final_df.withColumn(
+    "COMMITTEE_PARTY_AFFILIATION",
+    when(col("COMMITTEE_PARTY_AFFILIATION").isin("REP", "DEM", "IND", "DFL"),
+         col("COMMITTEE_PARTY_AFFILIATION"))
+    .otherwise("OTHERS")
+)
+df = df.withColumn(
+    "ENTITY_TP",
+    when(col("ENTITY_TP").isin("INDIVIDUAL", "CANDIDATE", "POLITICAL ACTION COMMITTEE"),
+         col("ENTITY_TP"))
+    .otherwise("OTHERS")
+)
+df = df.withColumn(
+    "ELECTION_TP",
+    when(col("ELECTION_TP").isin("Primary", "General", "Runoff", "Special"),
+         col("ELECTION_TP"))
+    .otherwise("OTHERS")
+)
 
 # Write output to S3 in Parquet format
 df.coalesce(1).write.option("compression", "snappy").mode("overwrite").parquet("s3://tf-cleaned-bucket-uo/final_master/")
