@@ -19,13 +19,27 @@ candidate_paths = ["s3://tf-parquet-bucket-uo/CI_CD(CSV+TO+PARQUET)/candidate/"]
 
 # Read data from Parquet
 df_contribution = spark.read.parquet(*contribution_paths)
-df_committee = spark.read.parquet(*committee_paths).dropDuplicates(["CMTE_ID"])
-df_candidate = spark.read.parquet(*candidate_paths).dropDuplicates(["CAND_ID"])
+df_committee = spark.read.parquet(*committee_paths)
+df_candidate = spark.read.parquet(*candidate_paths)
+
+df_committee = df_committee.dropDuplicates(["CMTE_ID"])
+df_candidate = df_candidate.dropDuplicates(["CAND_ID"])
+
 
 # Join datasets
-contrib_committee_df = df_contribution.join(df_committee, "CMTE_ID", "inner")
-final_master_df = contrib_committee_df.join(df_candidate, "CAND_ID", "inner")
+from pyspark.sql.functions import col
 
+contrib_committee_df = df_contribution.join(
+    df_committee,
+    df_contribution["CMTE_ID"] == df_committee["CMTE_ID"],
+    "inner"
+)
+
+final_master_df = contrib_committee_df.join(
+    df_candidate,
+    contrib_committee_df["CAND_ID"] == df_candidate["CAND_ID"],
+    "inner"
+)
 # Select and rename relevant columns
 final_master_df = final_master_df.select(
     df_contribution["*"],
@@ -189,6 +203,7 @@ final_df = df.filter(
     (col("ELECTION_YEAR") == "UNKNOWN") |
     (col("ELECTION_YEAR").cast("int").between(2013, 2025))
 )
+final_df=final_df.drop("MEMO_TEXT")
 
 # Parse date and amount fields
 final_df = final_df.withColumn("TRANSACTION_DT", to_date("TRANSACTION_DT", "MMddyyyy"))
