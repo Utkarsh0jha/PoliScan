@@ -1,45 +1,36 @@
-#POLYSCAN – Election Contributions Analytics
+# 📊 POLISCAN – Election Contributions Analytics  
+💡 *Turning U.S. political donation data into insights, trends, and transparency.*
 
-📌 Overview
+---
 
-Polyscan is an end-to-end big data analytics platform that leverages the publicly available OpenFEC (Federal Election Commission) datasets to uncover insights from U.S. political donation patterns. Built using a scalable AWS-based data pipeline architecture, the system enables political analysts, regulatory agencies, journalists, and the public to monitor political financing activities and detect anomalies with ease.
+## 📌 Overview 
+
+Poliscan is an end-to-end big data analytics platform that leverages the publicly available OpenFEC (Federal Election Commission) datasets to uncover insights from U.S. political donation patterns. Built using a scalable AWS-based data pipeline architecture, the system enables political analysts, regulatory agencies, journalists, and the public to monitor political financing activities and detect anomalies with ease.
 
 Our platform supports transparent, data-driven decisions in the electoral landscape by visualizing financial trends, flagging suspicious activities, and simplifying access to campaign finance data.
 
+## 🗂 Datasets Used  
 
-Main dataset:
+📂 **Primary Sources:**  
+- 🗃️ [Individual Contributions Dataset](https://www.fec.gov/campaign-finance-data/contributions-individuals-file-description/) — All donations made by individuals  
+- 🗃️ [Committee Master](https://www.fec.gov/campaign-finance-data/committee-master-file-description/) — Committees receiving contributions  
+- 🗃️ [Candidate Master](https://www.fec.gov/campaign-finance-data/candidate-master-file-description/) — Candidate details, elections, and party affiliation  
 
-https://www.fec.gov/campaign-finance-data/contributions-individuals-file-description/
+---
 
-https://www.fec.gov/campaign-finance-data/committee-master-file-description/
-
-https://www.fec.gov/campaign-finance-data/candidate-master-file-description/
-
-
-Individuals → Committees: Contributions are made to committees (CMTE_ID).
-
-Committees → Candidates: Committees are linked to candidates (CAND_ID or CAND_PCC).
-
-Candidates → Elections: Candidate data includes election year, office, and party.
-
+## 🎯 Project Objectives
+- [x] **Clean & structure** raw OpenFEC datasets (~40 GB) for analysis  
+- [x] Identify **key features** — donation amounts, donor demographics, transaction types  
+- [x] Detect **unusual or suspicious donations** using rule-based validation checks  
+- [x] Create **interactive dashboards** to visualize donation patterns and anomalies  
 
 
-🚀 The primary objectives of this project are:
+## 🏛 Architecture  
+Our system follows a **Medallion Architecture** with **Bronze, Silver, and Gold layers**:
 
-To clean and structure the OpenFEC individual contributions dataset to ensure it is suitable for analysis.
-
-To identify and organize key features—such as donation amounts, donor demographics, and transaction types—that influence donation patterns.
-
-To detect unusual or potentially suspicious donations through well-defined, rule-based validation checks (excluding the use of machine learning).
-
-To derive meaningful insights into donor behavior, including geographic origin, employment details, and socio-economic background.
-
-To present complex trends and anomalies in political donations through clear, intuitive visualizations.
-
-To develop a robust system or dashboard that enables analysts, campaign teams, and regulatory authorities to effectively explore and interpret political contribution data.
-
-
-System Architecture
+1. **Bronze Layer** – Stores raw OpenFEC data for reference  
+2. **Silver Layer** – Data cleaning, standardization, and enrichment (AWS Glue + Amazon EMR)  
+3. **Gold Layer** – Optimized, query-ready data for analytics (Amazon Athena + Power BI)  
 
 
 
@@ -78,22 +69,14 @@ Primary Source: OpenFEC Individual Contributions Dataset
 | Donor Demographics                | Breakdown of donors by occupation, employer, and gender.          |
 
 
+**Services Used:**  
+- ☁️ **AWS Glue** – ETL & schema discovery  
+- 📜 **AWS Glue Crawler** – Automated schema inference  
+- ⚡ **Amazon EMR (Spark)** – Large-scale distributed data processing  
+- 🗄 **Amazon Athena** – Serverless SQL querying on S3  
+- 📊 **Power BI** – Interactive dashboard & visualization
 
-Expected Outcomes:
-
-•	A deployable dashboard for public or organizational use.
-
-•	A clean and well-organized dataset ready for analysis.
-
-•	Clear understanding of what factors influence political donations.
-
-•	Detection of unusual or suspicious donation activities.
-
-•	Insights into who is donating — based on location, job, and gender.
-
-•	Easy-to-read charts and visuals showing donation trends and red flags.
-
-•	A useful tool or system that helps others (like analysts or officials) explore and understand political donation data.
+  
 
 
 
@@ -110,10 +93,13 @@ Use Cases:
 •	Public & Advocacy Groups: Promote transparency and advocate for campaign finance reform.
 
 
+---
 
-This project helps turn complex political donation data into clear and useful information. It allows people like analysts, campaign teams, and officials to see patterns, find unusual donations, and better understand who is funding politics.
-By making this information easier to explore, the project supports fairness, transparency, and trust in the election process. It gives the tools needed to keep political financing open and accountable — helping strengthen democracy in the U.S.
+## ✨ Impact
+> POLISCAN transforms complex, large-scale political donation data into **clear, actionable insights**.  
+> It empowers citizens, analysts, and regulators to **track money in politics**, ensuring **fairness, transparency, and trust** in the electoral process.
 
+## Dashboard
 
 
 
