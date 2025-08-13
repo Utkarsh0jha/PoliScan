@@ -3,11 +3,11 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - utkarsh
+      - main
 
 jobs:
   upload-and-run-etl:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Checkout code
