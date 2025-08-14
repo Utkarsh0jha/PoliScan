@@ -27,6 +27,10 @@ variable "glue_crawler_name" {
   default = "tf_automation_crawler"
 }
 
+variable "glue_role_arn"{
+  description = "IAM arn role to use for Glue Job"
+  type=string
+}
 #declare a script path
 variable "script_ingestion_path" {
   default = "s3://tf-script-bucket-uo/ingestion/tf_ingestion_glue_job.py"

@@ -3,7 +3,7 @@ name: Upload ETL Script & Trigger Job
 on:
   push:
     branches:
-      - utkarsh
+      - main
 
 jobs:
   upload-and-run-etl:
@@ -35,6 +35,8 @@ jobs:
       - name: Terraform Apply
         working-directory: IaaC
         run: terraform apply -auto-approve
+        env:
+           TF_VAR_glue_role_arn:${{secrets.GLUE_ROLE_ARN}}
 
       - name: Upload ingestion_job.py to S3
         run: |
