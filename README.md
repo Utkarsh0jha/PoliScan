@@ -18,6 +18,7 @@ Our platform supports transparent, data-driven decisions in the electoral landsc
 
 ---
 
+
 ## 🎯 Project Objectives
 - [x] **Clean & structure** raw OpenFEC datasets (~40 GB) for analysis  
 - [x] Identify **key features** — donation amounts, donor demographics, transaction types  
@@ -31,6 +32,10 @@ Our system follows a **Medallion Architecture** with **Bronze, Silver, and Gold 
 1. **Bronze Layer** – Stores raw OpenFEC data for reference  
 2. **Silver Layer** – Data cleaning, standardization, and enrichment (AWS Glue + Amazon EMR)  
 3. **Gold Layer** – Optimized, query-ready data for analytics (Amazon Athena + Power BI)  
+
+Architecture Diagram :
+
+<img width="808" height="779" alt="image" src="https://github.com/user-attachments/assets/d8d226fa-9d0e-4a8f-87d3-aed9d7f450dc" />
 
 
 
@@ -100,6 +105,21 @@ Use Cases:
 > It empowers citizens, analysts, and regulators to **track money in politics**, ensuring **fairness, transparency, and trust** in the electoral process.
 
 ## Dashboard
+
+ABOUT FEC:
+
+<img width="1514" height="743" alt="image" src="https://github.com/user-attachments/assets/34f14a45-9811-4c89-a3a6-85d460eee51a" />
+
+FEC DASHBOARD:
+
+<img width="1342" height="737" alt="image" src="https://github.com/user-attachments/assets/4805d20b-5c21-4209-b26f-c78bd7e501ef" />
+
+DEM AND REP PARTY:
+
+<img width="1376" height="743" alt="image" src="https://github.com/user-attachments/assets/2e513803-f888-4be4-b486-324e4094dfea" />
+
+
+
 
 
 
