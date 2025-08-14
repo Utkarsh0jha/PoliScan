@@ -108,13 +108,18 @@ Use Cases:
 
 ABOUT FEC:
 
+
 <img width="1514" height="743" alt="image" src="https://github.com/user-attachments/assets/34f14a45-9811-4c89-a3a6-85d460eee51a" />
+
 
 FEC DASHBOARD:
 
+
 <img width="1342" height="737" alt="image" src="https://github.com/user-attachments/assets/4805d20b-5c21-4209-b26f-c78bd7e501ef" />
 
+
 DEM AND REP PARTY:
+
 
 <img width="1376" height="743" alt="image" src="https://github.com/user-attachments/assets/2e513803-f888-4be4-b486-324e4094dfea" />
 
