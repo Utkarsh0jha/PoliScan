@@ -115,13 +115,15 @@ ABOUT FEC:
 FEC DASHBOARD:
 
 
-<img width="1342" height="737" alt="image" src="https://github.com/user-attachments/assets/4805d20b-5c21-4209-b26f-c78bd7e501ef" />
+<img width="1339" height="746" alt="image" src="https://github.com/user-attachments/assets/5a783a5a-30bf-406d-b98e-7dd9eef48b12" />
+
 
 
 DEM AND REP PARTY:
 
 
-<img width="1376" height="743" alt="image" src="https://github.com/user-attachments/assets/2e513803-f888-4be4-b486-324e4094dfea" />
+<img width="1359" height="747" alt="image" src="https://github.com/user-attachments/assets/001c138e-c93a-4125-a132-5ec92c0e87e9" />
+
 
 
 
